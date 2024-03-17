@@ -46,4 +46,5 @@ class NewYorkTimesModel {
     fun provideNewYorkTimesAPI(retrofit: Retrofit): NewYorkTimesAPI {
         return retrofit.create(NewYorkTimesAPI::class.java)
     }
+
 }

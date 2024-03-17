@@ -16,6 +16,10 @@ import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,6 +38,7 @@ import com.example.demojsonplaceholderapi.web.model.newyorktimes.NewyorkTimesDat
 import com.example.demojsonplaceholderapi.web.model.newyorktimes.Result
 import com.example.demorandomuserapi.ui.CustomNetworkImage
 import com.example.demorandomuserapi.ui.CustomText
+import com.example.demorandomuserapi.ui.LoadingAlertDialog
 import com.example.demorandomuserapi.ui.theme.Purple200
 import com.example.demorandomuserapi.ui.theme.Purple500
 import com.example.demorandomuserapi.ui.theme.Purple700
@@ -62,21 +67,27 @@ private fun callAPI(viewModel: NewYorkTimesViewModel) {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun ShowNewYorkTimesData(newYorkTimesData: State<NewyorkTimesData?>) {
+    var isDialogVisible by remember { mutableStateOf(true) }
 
     if (newYorkTimesData.value == null || newYorkTimesData.value?.results.isNullOrEmpty()) {
         Box(
             modifier = Modifier.fillMaxSize(1f),
             contentAlignment = Alignment.Center
         ) {
-            CustomText(
-                text = "Loading.......",
-                style = TextStyle(
-                    fontFamily = normalFont,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp,
-                ),
-                textAlign = TextAlign.Center, color = Purple500
-            )
+            if (isDialogVisible) {
+                LoadingAlertDialog(
+                    onClose = { isDialogVisible = false }
+                )
+            }
+            /*            CustomText(
+                            text = "Loading.......",
+                            style = TextStyle(
+                                fontFamily = normalFont,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 16.sp,
+                            ),
+                            textAlign = TextAlign.Center, color = Purple500
+                        )*/
         }
     } else if (newYorkTimesData.value?.results != null && newYorkTimesData.value!!.results.size > 0) {
         val length = newYorkTimesData.value?.results?.size

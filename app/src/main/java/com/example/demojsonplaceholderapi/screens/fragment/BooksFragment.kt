@@ -15,6 +15,10 @@ import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,10 +40,10 @@ import com.example.demojsonplaceholderapi.web.model.books.BooksData
 import com.example.demorandomuserapi.ui.CustomHyperLinkText
 import com.example.demorandomuserapi.ui.CustomNetworkImage
 import com.example.demorandomuserapi.ui.CustomText
+import com.example.demorandomuserapi.ui.LoadingAlertDialog
 import com.example.demorandomuserapi.ui.theme.Purple500
 import com.example.demorandomuserapi.ui.theme.WhiteContainer
 import com.example.demorandomuserapi.ui.theme.boldFont
-import com.example.demorandomuserapi.ui.theme.normalFont
 import kotlinx.coroutines.launch
 
 
@@ -56,12 +60,19 @@ fun getsBookViewModel(mContext: MainActivity) {
 
 @Composable
 private fun ShowBooksData(booksData: State<BooksData?>, mContext: MainActivity) {
+    var isDialogVisible by remember { mutableStateOf(true) }
+
     if (booksData.value == null || booksData.value?.results?.books.isNullOrEmpty()) {
         Box(
             modifier = Modifier.fillMaxSize(1f),
             contentAlignment = Alignment.Center
         ) {
-            CustomText(
+            if (isDialogVisible) {
+                LoadingAlertDialog(
+                    onClose = { isDialogVisible = false }
+                )
+            }
+            /*CustomText(
                 text = "Loading.......",
                 style = TextStyle(
                     fontFamily = normalFont,
@@ -69,7 +80,7 @@ private fun ShowBooksData(booksData: State<BooksData?>, mContext: MainActivity) 
                     fontSize = 16.sp,
                 ),
                 textAlign = TextAlign.Center, color = Purple500
-            )
+            )*/
         }
     } else if (booksData.value?.results != null && booksData.value!!.results.books.size > 0) {
         val length = booksData.value?.results?.books!!.size

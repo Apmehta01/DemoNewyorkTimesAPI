@@ -14,6 +14,10 @@ import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,10 +39,10 @@ import com.example.demojsonplaceholderapi.web.model.popular.Result
 import com.example.demorandomuserapi.ui.CustomHyperLinkText
 import com.example.demorandomuserapi.ui.CustomNetworkImage
 import com.example.demorandomuserapi.ui.CustomText
+import com.example.demorandomuserapi.ui.LoadingAlertDialog
 import com.example.demorandomuserapi.ui.theme.Purple500
 import com.example.demorandomuserapi.ui.theme.WhiteContainer
 import com.example.demorandomuserapi.ui.theme.boldFont
-import com.example.demorandomuserapi.ui.theme.normalFont
 import kotlinx.coroutines.launch
 
 
@@ -55,20 +59,27 @@ fun getMostPopularModel(mContext: MainActivity) {
 
 @Composable
 private fun ShowMostPopularData(mostPopularData: State<MostPopularData?>, mContext: MainActivity) {
+    var isDialogVisible by remember { mutableStateOf(true) }
+
     if (mostPopularData.value == null || mostPopularData.value?.results.isNullOrEmpty()) {
         Box(
             modifier = Modifier.fillMaxSize(1f),
             contentAlignment = Alignment.Center
         ) {
-            CustomText(
-                text = "Loading.......",
-                style = TextStyle(
-                    fontFamily = normalFont,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp,
-                ),
-                textAlign = TextAlign.Center, color = Purple500
-            )
+            if (isDialogVisible) {
+                LoadingAlertDialog(
+                    onClose = { isDialogVisible = false }
+                )
+            }
+            /* CustomText(
+                 text = "Loading.......",
+                 style = TextStyle(
+                     fontFamily = normalFont,
+                     fontWeight = FontWeight.Normal,
+                     fontSize = 16.sp,
+                 ),
+                 textAlign = TextAlign.Center, color = Purple500
+             )*/
         }
     } else if (mostPopularData.value?.results != null && mostPopularData.value!!.results.size > 0) {
         val length = mostPopularData.value?.results?.size

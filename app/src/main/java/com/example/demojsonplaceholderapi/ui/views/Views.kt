@@ -1,6 +1,7 @@
 package com.example.demorandomuserapi.ui
 
 
+import android.os.Build
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,12 +23,15 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Card
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconToggleButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -41,11 +45,21 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.ImageLoader
 import coil.compose.rememberImagePainter
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import com.example.demojsonplaceholderapi.R
+import com.example.demorandomuserapi.ui.theme.Purple500
+import com.example.demorandomuserapi.ui.theme.WhiteContainer
+import com.example.demorandomuserapi.ui.theme.normalFont
 
 @Composable
 fun CustomText(
@@ -503,7 +517,6 @@ fun CustomFloatingActionButton(
     }
 }
 
-/*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoadingAlertDialog(
@@ -514,17 +527,40 @@ fun LoadingAlertDialog(
         onDismissRequest = { onClose() },
         modifier = modifier
     ) {
-        Box(
-            modifier = Modifier.padding(16.dp),
-            contentAlignment = Alignment.Center
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .clip(RoundedCornerShape(10.dp)),
+            backgroundColor = WhiteContainer
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_background),
-                    contentDescription = "Loading GIF",
-                    modifier = Modifier.size(100.dp),
+
+                val imageLoader = ImageLoader.Builder(LocalContext.current)
+                    .components {
+                        if (Build.VERSION.SDK_INT >= 28) {
+                            add(ImageDecoderDecoder.Factory())
+                        } else {
+                            add(GifDecoder.Factory())
+                        }
+                    }.build()
+
+                val painter =
+                    rememberImagePainter(data = R.drawable.loading, imageLoader = imageLoader,
+                        builder = {
+                            placeholder(R.drawable.loading)
+                        })
+                Spacer(modifier = Modifier.height(16.dp))
+                CustomImage(
+                    painter = painter,
+                    contentDescription = "Your image description",
+                    modifier = Modifier,
+                    width = 60,
+                    height = 60,
+                    cornerRadius = 0,
                     contentScale = ContentScale.Fit
                 )
 
@@ -542,4 +578,4 @@ fun LoadingAlertDialog(
             }
         }
     }
-}*/
+}
